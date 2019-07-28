@@ -12,7 +12,7 @@
 
         row.id = 'player-row-' + index;
         row.className = 'player-row';
-        td1.innerHTML = '<input type="text" name="player[' + index + ']" value="Player ' + (index+1) + '" />';
+        td1.innerHTML = '<input type="text" onclick="handlePlayerSelect(this)" name="player[' + index + ']" value="Player ' + (index+1) + '" />';
         td2.innerHTML = '<input type="button" value="Remove" onclick="handleRemovePlayer(\'' + index + '\')" />'
 
         playerIndex.val(index + 1);
@@ -41,6 +41,10 @@
         for (var i = 0; i < numPlayers; i++) {
             handleRemovePlayer(0);
         }
+    }
+
+    function handlePlayerSelect(obj) {
+        $(obj).select();
     }
 </script>
 <style>
