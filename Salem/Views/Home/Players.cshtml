@@ -73,7 +73,7 @@
         {
         <tr id="player-row-@i" class="player-row @(i%2 == 0 ? "row-alt" : "")">
             <td>
-                <input type="text" name="player[@i]" value="@Model[i]" />
+                <input onclick="handlePlayerSelect(this)" type="text" name="player[@i]" value="@Model[i]" />
             </td>
             <td>
                 <input type="button" value="Remove" onclick="handleRemovePlayer('@i')" />
