@@ -1,0 +1,12 @@
+﻿@{
+    ViewBag.Title = "Play";
+}
+@model string[]
+
+<h1>Choose who you'd Save</h1>
+@foreach (var p in Model)
+{
+    <div>
+        <input type="button" value="@p" onclick="window.location = '/AddSave?player=@p'" />
+    </div>
+}

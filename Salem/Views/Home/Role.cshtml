@@ -1,0 +1,114 @@
+﻿@{
+    ViewBag.Title = "Play";
+}
+<script type="text/javascript">
+    function handleWitchButton() {
+        var btn = $('#witch-btn');
+        if (isWitch()) {
+            $('#isWitch').val('false');
+            btn.addClass('role-not');
+            btn.removeClass('role-yes');
+        } else {
+            $('#isWitch').val('true');
+            btn.removeClass('role-not');
+            btn.addClass('role-yes');
+        }
+
+        updateResults();
+    }
+
+    function handleConstableButton() {
+        var btn = $('#constable-btn');
+        if (isConstable()) {
+            $('#isConstable').val('false');
+            btn.addClass('role-not');
+            btn.removeClass('role-yes');
+        } else {
+            $('#isConstable').val('true');
+            btn.removeClass('role-not');
+            btn.addClass('role-yes');
+        }
+
+        updateResults();
+    }
+
+    function isWitch() {
+        return $('#isWitch').val() == 'true';
+    }
+
+    function isConstable() {
+        return $('#isConstable').val() == 'true';
+    }
+
+    function isVillager() {
+        return !isWitch() && !isConstable();
+    }
+
+    function updateWitchResults() {
+        var result = $('#witch-result')[0];
+        if (isWitch()) {
+            result.innerText = 'I AM a witch';
+        } else {
+            result.innerText = 'I am NOT a witch';
+        }
+    }
+
+    function updateConstableResults() {
+        var result = $('#constable-result')[0];
+        if (isConstable()) {
+            result.innerText = 'I AM the constable';
+        } else {
+            result.innerText = 'I am NOT the constable';
+        }
+    }
+
+    function updateVillagerResults() {
+        var result = $('#villager-result')[0];
+        if (isWitch() || isConstable()) {
+            result.innerText = 'I am NOT villager';
+        } else {
+            result.innerText = 'I AM a villager';
+        }
+    }
+
+    function updateResults() {
+        updateWitchResults();
+        updateConstableResults();
+        updateVillagerResults();
+    }
+</script>
+
+<style>
+    .role-not {
+        background-color: red;
+    }
+
+    .role-yes {
+        background-color: green;
+    }
+</style>
+
+<h1>Night</h1>
+@using (var form = Html.BeginForm("Kill", "Home", FormMethod.Post))
+{
+    <div>
+        <input type="hidden" id="isWitch" name="isWitch" value="false" />
+        <input type="button" id="witch-btn" onclick="handleWitchButton();" value="Witch" class="role-not" />
+    </div>
+    <div>
+        <input type="hidden" id="isConstable" name="isConstable" value="false" />
+        <input type="button" id="constable-btn" onclick="handleConstableButton();" value="Constable" class="role-not" />
+    </div>
+    <div>
+        Witch: <span id="witch-result">I am NOT a witch</span>
+    </div>
+    <div>
+        Constable: <span id="constable-result">I am NOT the contable</span>
+    </div>
+    <div>
+        Village: <span id="villager-result">I AM a villager</span>
+    </div>
+    <div>
+        <input type="submit" value="Next" />
+    </div>
+}

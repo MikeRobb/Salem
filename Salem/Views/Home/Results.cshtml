@@ -1,0 +1,11 @@
+﻿@{
+    ViewBag.Title = "Play";
+}
+@using Salem.Models;
+@model VotesContainer
+
+<h1>Kill: @Model.GetKilledPlayer()</h1>
+
+<div>
+    <input type="button" onclick="window.location = '/';" value="Next" />
+</div>

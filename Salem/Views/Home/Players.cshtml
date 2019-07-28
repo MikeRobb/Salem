@@ -1,0 +1,82 @@
+﻿@{
+    ViewBag.Title = "Players";
+}
+@model string[]
+<script type="text/javascript">
+    function handleAddPlayer() {
+        var playerIndex = $('#num-players');
+        var index = parseInt(playerIndex.val());
+        var row = $('table')[0].insertRow(index + 1)
+        var td1 = row.insertCell(0);
+        var td2 = row.insertCell(1);
+
+        row.id = 'player-row-' + index;
+        row.className = 'player-row';
+        td1.innerHTML = '<input type="text" name="player[' + index + ']" value="Player ' + (index+1) + '" />';
+        td2.innerHTML = '<input type="button" value="Remove" onclick="handleRemovePlayer(\'' + index + '\')" />'
+
+        playerIndex.val(index + 1);
+    }
+
+    function handleRemovePlayer(index) {
+        $('#player-row-' + index).remove();
+
+        var playerRows = $('.player-row');
+        for (var i = 0; i < playerRows.length; i++) {
+            var cur = playerRows[i];
+            var oldId = cur.id;
+            var playerInput = $('#' + oldId + ' input[type=text]')[0];
+            playerInput.name = 'player[' + i + ']';
+
+            var removeBtn = $('#' + oldId + ' input[type=button]');
+            removeBtn.attr('onclick', "handleRemovePlayer('" + i + "')");
+            cur.id = 'player-row-' + i;
+        }
+
+        $('#num-players').val(i);
+    }
+
+    function handleResetPlayers() {
+        var numPlayers = parseInt($('#num-players').val());
+        for (var i = 0; i < numPlayers; i++) {
+            handleRemovePlayer(0);
+        }
+    }
+</script>
+<style>
+    table {
+        width: 100%;
+    }
+
+    table td {
+        width: 50%;
+    }
+
+    table input[type=button] {
+        margin: 0px 10px;
+    }
+</style>
+
+<h1>Players</h1>
+@using(Html.BeginForm("UpdatePlayers", "Home", FormMethod.Post)) {
+    <input type="hidden" value="@Model.Length" id="num-players" />
+<table>
+        <tr>
+            <td>Player</td>
+            <td><input type="button" value="Add" onclick="handleAddPlayer()" /></td>
+        </tr>
+        @for(int i = 0; i < Model.Length; i++)
+        {
+        <tr id="player-row-@i" class="player-row @(i%2 == 0 ? "row-alt" : "")">
+            <td>
+                <input type="text" name="player[@i]" value="@Model[i]" />
+            </td>
+            <td>
+                <input type="button" value="Remove" onclick="handleRemovePlayer('@i')" />
+            </td>
+        </tr>
+        }
+    </table>
+    <input type="submit" value="Update" />
+    <input type="button" value="Reset" onclick="handleResetPlayers()" />
+}

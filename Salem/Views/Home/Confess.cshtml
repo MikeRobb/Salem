@@ -1,0 +1,15 @@
+﻿@{
+    ViewBag.Title = "Play";
+}
+@using Salem.Models;
+@model VotesContainer
+
+<h1>Everyone Confess</h1>
+<h2>Saved: @Model.GetSavedPlayer()</h2>
+<p>
+    Let everyone who would like to confess do so now.  Once this is done, press the next button to reveal the results of the night
+</p>
+
+<div>
+    <input type="button" onclick="window.location = '/Results';" value="Next" />
+</div>
