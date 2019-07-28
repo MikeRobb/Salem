@@ -4,40 +4,41 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using Salem.Data.Salem;
 
 namespace Salem.Controllers
 {
     public class HomeController : Controller
     {
-        private const string VotesKey = "Votes";
-        private const string PlayersKey = "Players";
-        private const string WitchKey = "Witch";
-        private const string ConstableKey = "Constable"; 
+        private readonly SessionRepository _sessionRepo;
+
+        public HomeController()
+        {
+            _sessionRepo = new SessionRepository();
+        }
 
         public ActionResult Index()
         {
+            _sessionRepo.GetGameSessionId();
             return View();
         }
 
         public ActionResult Players()
         {
-            var players = Session[PlayersKey];
-            if(players == null)
-            {
-                players = new string[0];
-            }
+            var players = _sessionRepo.GetPlayers();
             return View(players);
         }
 
         public ActionResult UpdatePlayers(string[] player)
         {
-            Session[PlayersKey] = player;
+            _sessionRepo.SetPlayers(player);
             return RedirectToAction("Index");
         }
 
         public ActionResult FirstPlay()
         {
-            Session[VotesKey] = new VotesContainer();
+            _sessionRepo.UpdateVotes(new VotesContainer());
+            _sessionRepo.StartRound();
             return RedirectToAction("Play");
         }
 
@@ -53,14 +54,14 @@ namespace Salem.Controllers
 
         public ActionResult Kill(bool isWitch, bool isConstable)
         {
-            Session[WitchKey] = isWitch;
-            Session[ConstableKey] = isConstable;
+            _sessionRepo.UpdateIsWitch(isWitch);
+            _sessionRepo.UpdateIsConstable(isConstable);
 
-            var players = (string[])Session[PlayersKey] ?? new string[0];
+            var players = _sessionRepo.GetPlayers();
             var model = new KillModel(players);
             if(isWitch)
             {
-                var m = (VotesContainer)Session[VotesKey];
+                var m = _sessionRepo.GetVotes();
                 model.AddWitchVotes(m.GetWitchVotes());
             }
             return View(model);
@@ -68,38 +69,39 @@ namespace Salem.Controllers
 
         public ActionResult Save(string player)
         {
-            if ((bool)Session[WitchKey])
+            if (_sessionRepo.IsWitch())
             {
-                var m = (VotesContainer)Session[VotesKey];
+                var m = _sessionRepo.GetVotes();
                 m.SetKilled(player);
-                Session[VotesKey] = m;
+                _sessionRepo.UpdateVotes(m);
             }
 
-            var players = (string[])Session[PlayersKey] ?? new string[0];
+            var players = _sessionRepo.GetPlayers();
             return View(players);
         }
 
         public ActionResult AddSave(string player)
         {
-            if ((bool)Session[ConstableKey])
+            if (_sessionRepo.IsConstable())
             {
-                var m = (VotesContainer)Session[VotesKey];
+                var m = _sessionRepo.GetVotes();
                 m.SetSaved(player);
-                Session[VotesKey] = m;
+                _sessionRepo.UpdateVotes(m);
             }
             return RedirectToAction("Play");
         }
 
         public ActionResult Confess()
         {
-            var m = (VotesContainer)Session[VotesKey];
+            var m = _sessionRepo.GetVotes();
 
             return View(m);
         }
 
         public ActionResult Results()
         {
-            var m = (VotesContainer)Session[VotesKey];
+            var m = _sessionRepo.GetVotes();
+            _sessionRepo.SaveResults(m.GetKilledPlayer(), m.GetSavedPlayer());
 
             return View(m);
         }
