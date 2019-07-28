@@ -8,12 +8,12 @@ namespace Salem.Models
     public class VotesContainer
     {
         private string PlayerSaved;
-        private string[] PlayersKilled;
+        private IList<string> PlayersKilled;
 
         public VotesContainer()
         {
             PlayerSaved = string.Empty;
-            PlayersKilled = new string[0];
+            PlayersKilled = new List<string>();
         }
 
         public void SetSaved(string player)
@@ -23,32 +23,26 @@ namespace Salem.Models
 
         public void SetKilled(string player)
         {
-            bool found = false;
-            for(int i = 0; i < PlayersKilled.Length; i++)
-            {
-                string cur = PlayersKilled[i];
-                if(cur.Equals(player))
-                { found = true; continue; }
-            }
-
-            if(found == false)
-            {
-                var temp = new string[PlayersKilled.Length + 1];
-                int i = 0;
-                foreach(var p in PlayersKilled)
-                {
-                    temp[i] = p;
-                    i++;
-                }
-
-                temp[i] = player;
-                PlayersKilled = temp.ToArray();
-            }
+            PlayersKilled.Add(player);
         }
 
         public string GetSavedPlayer()
         {
             return PlayerSaved;
+        }
+
+        public IDictionary<string, int> GetWitchVotes()
+        {
+            var dict = new Dictionary<string, int>();
+            foreach (var p in PlayersKilled)
+            {
+                if (dict.ContainsKey(p) == false)
+                    dict[p] = 0;
+
+                dict[p] += 1;
+            }
+
+            return dict;
         }
 
         public string GetKilledPlayer()

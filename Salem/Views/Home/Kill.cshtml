@@ -1,12 +1,20 @@
 ﻿@{
     ViewBag.Title = "Play";
 }
-@model string[]
+@using Salem.Models
+@model KillModel
 
 <h1>Choose who you'd Kill</h1>
-@foreach(var p in Model)
+@foreach(var p in Model.Players)
 {
     <div>
-        <input type="button" value="@p" onclick="window.location = '/Save?player=@p'" />
+        @{ 
+            var playerLabel = p;
+            if(Model.WitchVotes.ContainsKey(p) && Model.WitchVotes[p] > 0)
+            {
+                playerLabel += $" ({Model.WitchVotes[p]})";
+            }
+        }
+        <input type="button" value="@playerLabel" onclick="window.location = '/Save?player=@p'" />
     </div>
 }

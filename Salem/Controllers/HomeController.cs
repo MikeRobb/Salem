@@ -57,7 +57,13 @@ namespace Salem.Controllers
             Session[ConstableKey] = isConstable;
 
             var players = (string[])Session[PlayersKey] ?? new string[0];
-            return View(players);
+            var model = new KillModel(players);
+            if(isWitch)
+            {
+                var m = (VotesContainer)Session[VotesKey];
+                model.AddWitchVotes(m.GetWitchVotes());
+            }
+            return View(model);
         }
 
         public ActionResult Save(string player)
